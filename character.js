@@ -47,7 +47,13 @@ class Character {
       // Checks if right is pressed
       this.xPos += 5; // Moves right
     }
-
+    // Keep the character inside the canvas, left and right
+    if (this.xPos < 0) {
+      this.xPos = 0;
+    }
+    if (this.xPos + this.width > width) {
+      this.xPos = width - this.width;
+    }
     this.yPos += this.speedY; // Moves the character vertically
     this.speedY += this.gravity; // Applies gravity
 
