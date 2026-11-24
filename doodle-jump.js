@@ -1,65 +1,65 @@
 import Platform from "./platform.js"; // Imports the platform class
-import Character from "./character.js"; // Imports the character class
 
 let backgroundImage; // Stores the background image
-let characterImage; // Stores the character image
 let platforms = []; // Stores all platforms
-let player; // Stores the player
 
-// Which mode the game is in: "start", "playing" or "gameOver"
+// NEW: which mode the game is in: "start", "playing" or "gameOver"
 let gameState = "start";
 
-// Position and size of the button
+// NEW: position and size of the button (used on both start and game over screens)
 let buttonX = 105;
 let buttonY = 360;
 let buttonW = 150;
 let buttonH = 50;
 
 function preload() {
-  backgroundImage = loadImage("assets/doodlejump-background-space.png");
-  characterImage = loadImage("assets/doodlejump-character.png");
+  // Loads images before the game starts
+  backgroundImage = loadImage("assets/doodlejump-background-space.png"); // Loads the background
 }
 
 function setup() {
-  createCanvas(360, 776);
-  resetGame();
+  // Runs once when the game starts
+  createCanvas(360, 776); // Creates the game canvas
+  createPlatforms(); // NEW: your platform loop now lives in its own function
 }
 
-// Creates everything for a new round: platforms and character
-function resetGame() {
-  platforms = [];
+// NEW: creates the platforms. In its own function so we can
+// run it again when the player clicks "Play again".
+function createPlatforms() {
+  platforms = []; // Empties the array so the old platforms disappear
 
   for (let i = 0; i < 7; i++) {
-    let x = random(20, 240);
-    let y = 700 - i * 100;
-    platforms.push(new Platform(x, y, 70, 13));
-  }
+    // Creates 7 platforms
+    let x = random(20, 240); // Random horizontal position
+    let y = 700 - i * 100; // Places platforms above each other
 
-  player = new Character(130, 600, 40, 48, characterImage);
+    platforms.push(new Platform(x, y, 70, 13)); // Adds a platform
+  }
 }
 
 function draw() {
-  image(backgroundImage, 0, 0, width, height);
+  // Runs continuously
+  image(backgroundImage, 0, 0, width, height); // Draws the background
 
+  // NEW: draw the right screen depending on the mode
   if (gameState === "start") {
     drawStartScreen();
   } else if (gameState === "playing") {
     for (let i = 0; i < platforms.length; i++) {
-      platforms[i].draw();
+      // Goes through all platforms
+      platforms[i].draw(); // Draws each platform
     }
 
-    player.move();
-    player.draw();
-
-    // Game over if the character falls out below the bottom
-    if (player.yPos > height) {
-      gameState = "gameOver";
-    }
+    // Later, when the character is added here:
+    // if (player.yPos > height) {
+    //   gameState = "gameOver";
+    // }
   } else if (gameState === "gameOver") {
     drawGameOverScreen();
   }
 }
 
+// NEW: start screen with title and button
 function drawStartScreen() {
   fill(255);
   textAlign(CENTER, CENTER);
@@ -68,6 +68,7 @@ function drawStartScreen() {
   drawButton("Start");
 }
 
+// NEW: end screen with text and button
 function drawGameOverScreen() {
   fill(255);
   textAlign(CENTER, CENTER);
@@ -76,6 +77,7 @@ function drawGameOverScreen() {
   drawButton("Play again");
 }
 
+// NEW: draws the button with the text we send in
 function drawButton(label) {
   fill(255, 200, 0);
   rect(buttonX, buttonY, buttonW, buttonH, 10);
@@ -84,7 +86,9 @@ function drawButton(label) {
   text(label, buttonX + buttonW / 2, buttonY + buttonH / 2);
 }
 
+// NEW: runs automatically every time you click
 function mousePressed() {
+  // Is the mouse inside the button?
   let onButton =
     mouseX > buttonX &&
     mouseX < buttonX + buttonW &&
@@ -92,12 +96,13 @@ function mousePressed() {
     mouseY < buttonY + buttonH;
 
   if (onButton && (gameState === "start" || gameState === "gameOver")) {
-    resetGame();
+    createPlatforms(); // New platforms for a new round
     gameState = "playing";
   }
 }
 
-// Needed because the file uses "import"
+// NEW: needed because the file uses "import".
+// It makes p5 find your functions.
 window.preload = preload;
 window.setup = setup;
 window.draw = draw;
