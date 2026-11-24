@@ -1,9 +1,13 @@
+let backgroundImage;
+
+function preload() {
+  backgroundImage = loadImage("assets/doodlejump-background-03.png");
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(128, 0, 0);
 }
 
 function draw() {
-  circle(100, 100, 20);
-  circle(300, 300, 40);
+  image(backgroundImage, 0, 0, width, height);
 }
