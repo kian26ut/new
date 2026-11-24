@@ -1,7 +1,7 @@
 let backgroundImage;
 
 function preload() {
-  backgroundImage = loadImage("assets/doodlejump-background-03.png");
+  backgroundImage = loadImage("assets/doodlejump-background-space.png");
 }
 
 function setup() {
