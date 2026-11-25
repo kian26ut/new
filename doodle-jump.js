@@ -270,29 +270,69 @@ class MovingPlatform extends Platform {
 }
 
 // A platform that breaks after being jumped on once (used in the Hell world)
+
 class BreakingPlatform extends Platform {
+  // Creates a breakable platform
+
   constructor(x, y, width, height, img) {
-    super(x, y, width, height, img); // Sets up everything a normal platform has
-    this.broken = false; // Starts in one piece
+    super(x, y, width, height, img); // Uses the normal platform settings
+    this.breakImage = img; // Stores the breaking platform image
+    this.broken = false; // Platform starts unbroken
+    this.breakFrames = 0; // Counts animation frames
   }
 
-  // Keeps its own image no matter which world we are in
-  setTheme(theme) {}
+  setTheme(theme) {
+    // Keeps the breaking platform image
+  }
 
-  // Only draws the platform if it isn't broken
   draw() {
+    // Draws the platform
+
     if (this.broken === false) {
-      super.draw(); // Uses the normal platform's draw method
+      // Platform is not broken
+      super.draw(); // Draws the whole platform
+    } else if (this.breakFrames < 25) {
+      // Plays breaking animation
+
+      let halfWidth = this.width / 2; // Half the platform width
+      let imageHalf = this.breakImage.width / 2; // Half the image width
+      let fall = this.breakFrames * 2; // Makes pieces fall down
+
+      image(
+        this.breakImage,
+        this.xPos - this.breakFrames,
+        this.yPos + fall,
+        halfWidth,
+        this.height,
+        0,
+        0,
+        imageHalf,
+        this.breakImage.height,
+      ); // Draws the left half moving left and down
+
+      image(
+        this.breakImage,
+        this.xPos + halfWidth + this.breakFrames,
+        this.yPos + fall,
+        halfWidth,
+        this.height,
+        imageHalf,
+        0,
+        imageHalf,
+        this.breakImage.height,
+      ); // Draws the right half moving right and down
+
+      this.breakFrames++; // Advances the animation
     }
   }
 
-  // The first landing gives a bounce and breaks the platform.
-  // After that, the player falls straight through.
   land() {
+    // Runs when the player lands
     if (this.broken === true) {
-      return false;
+      return false; // Cannot bounce again
     }
-    this.broken = true;
-    return true;
+
+    this.broken = true; // Breaks the platform
+    return true; // Allows one final bounce
   }
 }
