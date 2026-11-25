@@ -75,14 +75,14 @@ function createPlatform(x, y) {
   let theme = getTheme();
 
   if (theme.name === "Hell" && random() < 0.35) {
-    return new BreakingPlatform(x, y, 70, 15, breakingPlatformImage);
+    return new BreakingPlatform(x, y, 70, 10, breakingPlatformImage);
   }
 
   if (theme.name === "Sky" && random() < 0.35) {
-    return new MovingPlatform(x, y, 70, 15, movingPlatformImage);
+    return new MovingPlatform(x, y, 70, 10, movingPlatformImage);
   }
 
-  return new Platform(x, y, 70, 15, theme.platform); // The world's own normal platform
+  return new Platform(x, y, 70, 10, theme.platform); // The world's own normal platform
 }
 
 // Creates the starting platforms
@@ -105,6 +105,15 @@ function draw() {
     drawStartScreen();
   } else if (gameState === "playing") {
     player.characterImage = theme.character; // Uses the world's character
+
+    if (theme.name === "Space") {
+      // Checks if the world is Space
+      player.width = 38; // Alien width
+      player.height = 42; // Alien height
+    } else {
+      player.width = 45; // Other characters' width
+      player.height = 45; // Other characters' height
+    }
 
     let previousBottom = player.yPos + player.height; // Saves previous foot position
 

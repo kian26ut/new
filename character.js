@@ -22,7 +22,7 @@ export default class Character {
 
     if (this.squishFrames > 0) {
       // Checks if squish is active
-      drawWidth = this.width * 1.2; // Makes character 20% wider
+      drawWidth = this.width * 1.1; // Makes character 20% wider
       drawHeight = this.height * 0.8; // Makes character 20% shorter
       this.squishFrames--; // Counts down the animation
     }
