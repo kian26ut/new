@@ -1,6 +1,4 @@
 import Platform from "./platform.js"; // Normal platform
-import MovingPlatform from "./movingPlatform.js"; // Moving platform (Sky)
-import BreakingPlatform from "./breakingPlatform.js"; // Breaking platform (Hell)
 import Character from "./character.js"; // The player's character
 
 let themes = []; // The three worlds: Space, Hell and Sky
@@ -239,3 +237,51 @@ window.preload = preload;
 window.setup = setup;
 window.draw = draw;
 window.mousePressed = mousePressed;
+
+// A platform that moves left and right (used in the Sky world)
+class MovingPlatform extends Platform {
+  constructor(x, y, width, height, img) {
+    super(x, y, width, height, img); // Sets up everything a normal platform has
+    this.speedX = 2; // Horizontal speed
+  }
+
+  // Keeps its own image no matter which world we are in
+  setTheme(theme) {}
+
+  // Moves the platform and turns it around at the canvas edges
+  update() {
+    this.xPos += this.speedX;
+
+    if (this.xPos < 0 || this.xPos + this.width > width) {
+      this.speedX *= -1; // Changes direction
+    }
+  }
+}
+
+// A platform that breaks after being jumped on once (used in the Hell world)
+class BreakingPlatform extends Platform {
+  constructor(x, y, width, height, img) {
+    super(x, y, width, height, img); // Sets up everything a normal platform has
+    this.broken = false; // Starts in one piece
+  }
+
+  // Keeps its own image no matter which world we are in
+  setTheme(theme) {}
+
+  // Only draws the platform if it isn't broken
+  draw() {
+    if (this.broken === false) {
+      super.draw(); // Uses the normal platform's draw method
+    }
+  }
+
+  // The first landing gives a bounce and breaks the platform.
+  // After that, the player falls straight through.
+  land() {
+    if (this.broken === true) {
+      return false;
+    }
+    this.broken = true;
+    return true;
+  }
+}
