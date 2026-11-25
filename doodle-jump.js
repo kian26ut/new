@@ -54,6 +54,7 @@ function setup() {
   // Runs once when the game starts
   createCanvas(360, 776); // Creates the game canvas
   createPlatforms(); // Creates the platforms
+  textFont("Arial Rounded MT Bold"); // Sets a rounded font
 }
 
 // Finds the world that matches the current score
@@ -166,7 +167,7 @@ function draw() {
 
     // Shows the score (top left) and the world name (top right)
     fill(255);
-    textSize(20);
+    textSize(15);
     textAlign(LEFT, TOP);
     text("Score: " + score, 15, 15);
     textAlign(RIGHT, TOP);
@@ -189,7 +190,7 @@ function drawStartScreen() {
   textAlign(CENTER, CENTER); // Centers text
   textSize(32); // Text size
   text("Doodle Jump", width / 2, 250); // Game title
-  drawButton("Start"); // Start button
+  drawButton("START"); // Start button
 }
 
 function drawGameOverScreen() {
@@ -198,7 +199,7 @@ function drawGameOverScreen() {
   textSize(32); // Text size
   text("Game Over", width / 2, 250); // Game over message
 
-  textSize(22); // Smaller text for the scores
+  textSize(20); // Smaller text for the scores
   text("Score: " + score, width / 2, 300); // This round's score
   text("Best: " + bestScore, width / 2, 330); // Personal best
 
