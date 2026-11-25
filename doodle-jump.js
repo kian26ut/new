@@ -152,6 +152,7 @@ function draw() {
         // land() decides if we bounce (a broken platform says no)
         if (platform.land() === true) {
           player.yPos = platform.yPos - player.height; // Places player on platform
+          player.squishFrames = 8; // Squishes the character for 8 frames
           player.speedY = -12; // Makes player jump again
 
           // SCORE: one point per platform, only the first time we land on it
