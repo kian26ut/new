@@ -7,6 +7,9 @@ export default class MovingPlatform extends Platform {
     this.speedX = 2; // Horizontal speed
   }
 
+  // Keeps its own image no matter which world we are in
+  setTheme(theme) {}
+
   // Moves the platform and turns it around at the canvas edges
   update() {
     this.xPos += this.speedX;

@@ -7,6 +7,9 @@ export default class BreakingPlatform extends Platform {
     this.broken = false; // Starts in one piece
   }
 
+  // Keeps its own image no matter which world we are in
+  setTheme(theme) {}
+
   // Only draws the platform if it isn't broken
   draw() {
     if (this.broken === false) {
@@ -24,3 +27,4 @@ export default class BreakingPlatform extends Platform {
     return true;
   }
 }
+s;

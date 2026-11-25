@@ -4,7 +4,6 @@ import BreakingPlatform from "./breakingPlatform.js"; // Breaking platform (Hell
 import Character from "./character.js"; // The player's character
 
 let themes = []; // The three worlds: Space, Hell and Sky
-let platformImage; // Normal platform image
 let movingPlatformImage; // Moving platform image
 let breakingPlatformImage; // Breaking platform image
 
@@ -23,29 +22,32 @@ let buttonH = 50;
 
 function preload() {
   // Loads all images before the game starts
-  platformImage = loadImage("assets/doodlejump-platform.png");
   movingPlatformImage = loadImage("assets/doodlejump-platform-moving.png");
   breakingPlatformImage = loadImage("assets/doodlejump-platform-breaking.png");
 
-  // Each world has a name, the score where it starts, a background and a character
+  // Each world has a name, the score where it starts,
+  // a background, a character and a normal platform image
   themes = [
     {
       name: "Space",
       startScore: 0,
       background: loadImage("assets/doodlejump-background-space.png"),
       character: loadImage("assets/doodlejump-character.png"),
+      platform: loadImage("assets/doodlejump-platform.png"), // Purple
     },
     {
       name: "Hell",
       startScore: 20,
       background: loadImage("assets/doodlejump-background-hell.png"),
       character: loadImage("assets/doodlejump-character-fire.png"),
+      platform: loadImage("assets/doodlejump-platform-hell.png"), // Orange
     },
     {
       name: "Sky",
       startScore: 40,
       background: loadImage("assets/doodlejump-background-sky.png"),
       character: loadImage("assets/doodlejump-character-angel.png"),
+      platform: loadImage("assets/doodlejump-platform-sky.png"), // Dark blue
     },
   ];
 }
@@ -69,7 +71,7 @@ function getTheme() {
   return current;
 }
 
-// Creates ONE platform. The type depends on which world we are in.
+// Creates ONE platform. The type and image depend on which world we are in.
 function createPlatform(x, y) {
   let theme = getTheme();
 
@@ -81,7 +83,7 @@ function createPlatform(x, y) {
     return new MovingPlatform(x, y, 70, 15, movingPlatformImage);
   }
 
-  return new Platform(x, y, 70, 15, platformImage);
+  return new Platform(x, y, 70, 15, theme.platform); // The world's own normal platform
 }
 
 // Creates the starting platforms
@@ -137,6 +139,7 @@ function draw() {
       // Checks all platforms
       let platform = platforms[i]; // Gets current platform
 
+      platform.setTheme(theme); // Gives the platform the current world's look
       platform.update(); // Moves the platform (only moving platforms actually move)
       platform.draw(); // Draws the platform
 
@@ -225,7 +228,7 @@ function mousePressed() {
     score = 0; // Resets the score FIRST, so we start in the Space world
     createPlatforms(); // Creates new platforms
 
-    player = new Character(130, 600, 40, 40, themes[0].character); // Creates character
+    player = new Character(130, 600, 45, 45, themes[0].character); // Creates character
 
     gameState = "playing"; // Starts the game
   }

@@ -9,6 +9,11 @@ export default class Platform {
     this.counted = false; // Has the player already scored on this platform?
   }
 
+  // Switches to the current world's platform image
+  setTheme(theme) {
+    this.img = theme.platform;
+  }
+
   // Normal platforms don't move, so update does nothing
   update() {}
 
