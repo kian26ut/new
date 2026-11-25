@@ -52,7 +52,29 @@ function draw() {
     let previousBottom = player.yPos + player.height; // Saves previous foot position
 
     player.move(); // Moves the character once per frame
+    // SCROLLING: if the player goes above the middle,
+    // keep the player there and move the platforms down instead
+    if (player.yPos < height / 2) {
+      let difference = height / 2 - player.yPos; // How far above the middle
+      player.yPos = height / 2; // Keeps the player at the middle
 
+      for (let i = 0; i < platforms.length; i++) {
+        platforms[i].yPos += difference; // Moves every platform down
+      }
+    }
+
+    // NEW PLATFORMS: remove platforms below the screen
+    // and add a new one above the highest platform
+    for (let i = platforms.length - 1; i >= 0; i--) {
+      if (platforms[i].yPos > height) {
+        platforms.splice(i, 1); // Removes the platform from the array
+
+        let highest = platforms[platforms.length - 1]; // The last platform is the highest
+        let x = random(20, 240);
+        let y = highest.yPos - 100; // 100 pixels above the highest
+        platforms.push(new Platform(x, y, 70, 13)); // Adds a new platform at the top
+      }
+    }
     for (let i = 0; i < platforms.length; i++) {
       // Checks all platforms
 
@@ -123,7 +145,7 @@ function mousePressed() {
   if (onButton && (gameState === "start" || gameState === "gameOver")) {
     createPlatforms(); // Creates new platforms
 
-    player = new Character(130, 600, 40, 48, characterImage); // Creates character
+    player = new Character(130, 600, 40, 40, characterImage); // Creates character
 
     gameState = "playing"; // Starts the game
   }
