@@ -5,6 +5,8 @@ let backgroundImage; // Stores the background image
 let characterImage; // Stores the character image
 let player; // Stores the player character
 let platforms = []; // Stores all platforms
+let score = 0; // Number of platforms landed on this round
+let bestScore = 0; // Personal best
 
 let gameState = "start"; // Current game state
 
@@ -48,10 +50,10 @@ function draw() {
     drawStartScreen();
   } else if (gameState === "playing") {
     // Game is running
-
     let previousBottom = player.yPos + player.height; // Saves previous foot position
 
     player.move(); // Moves the character once per frame
+
     // SCROLLING: if the player goes above the middle,
     // keep the player there and move the platforms down instead
     if (player.yPos < height / 2) {
@@ -75,9 +77,9 @@ function draw() {
         platforms.push(new Platform(x, y, 70, 13)); // Adds a new platform at the top
       }
     }
+
     for (let i = 0; i < platforms.length; i++) {
       // Checks all platforms
-
       let platform = platforms[i]; // Gets current platform
 
       platform.draw(); // Draws the platform
@@ -91,13 +93,28 @@ function draw() {
       ) {
         player.yPos = platform.yPos - player.height; // Places player on platform
         player.speedY = -12; // Makes player jump again
+
+        // SCORE: one point per platform, only the first time we land on it
+        if (platform.counted === false) {
+          score += 1; // Adds one point
+          platform.counted = true; // Remembers that this platform is counted
+        }
       }
     }
 
     player.draw(); // Draws the character
 
+    // Shows the score in the top left corner (drawn last so it's on top)
+    fill(255);
+    textAlign(LEFT, TOP);
+    textSize(20);
+    text("Score: " + score, 15, 15);
+
     if (player.yPos > height) {
       // Checks if player falls below screen
+      if (score > bestScore) {
+        bestScore = score; // New personal best!
+      }
       gameState = "gameOver"; // Ends the game
     }
   } else if (gameState === "gameOver") {
@@ -121,6 +138,11 @@ function drawGameOverScreen() {
   textAlign(CENTER, CENTER); // Centers text
   textSize(32); // Text size
   text("Game Over", width / 2, 250); // Game over message
+
+  textSize(22); // Smaller text for the scores
+  text("Score: " + score, width / 2, 300); // This round's score
+  text("Best: " + bestScore, width / 2, 330); // Personal best
+
   drawButton("Play again"); // Restart button
 }
 
@@ -135,7 +157,6 @@ function drawButton(label) {
 
 function mousePressed() {
   // Runs when mouse is clicked
-
   let onButton =
     mouseX > buttonX &&
     mouseX < buttonX + buttonW &&
@@ -144,6 +165,7 @@ function mousePressed() {
 
   if (onButton && (gameState === "start" || gameState === "gameOver")) {
     createPlatforms(); // Creates new platforms
+    score = 0; // Resets the score for a new round
 
     player = new Character(130, 600, 40, 40, characterImage); // Creates character
 
