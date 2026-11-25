@@ -3,13 +3,13 @@ let player; // Stores the player character
 
 function preload() {
   // Loads files before the game starts
-  characterImage = loadImage("assets/doodlejump-character-03.png"); // Loads the character image
+  characterImage = loadImage("assets/doodlejump-character.png"); // Loads the character image
 }
 
 function setup() {
   // Runs once when the game starts
   createCanvas(360, 776); // Creates the game canvas
-  player = new Character(130, 600, 80, 80); // Creates the player with position and size
+  player = new Character(130, 600, 40, 48); // Creates the player with position and size
 }
 
 function draw() {
@@ -52,6 +52,7 @@ class Character {
       this.xPos = 0;
     }
     if (this.xPos + this.width > width) {
+      // right
       this.xPos = width - this.width;
     }
     this.yPos += this.speedY; // Moves the character vertically
