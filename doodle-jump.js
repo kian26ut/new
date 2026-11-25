@@ -1,12 +1,14 @@
 import Platform from "./platform.js"; // Imports the platform class
+import Character from "./character.js"; // Imports the character class
 
 let backgroundImage; // Stores the background image
+let characterImage; // Stores the character image
+let player; // Stores the player character
 let platforms = []; // Stores all platforms
 
-// NEW: which mode the game is in: "start", "playing" or "gameOver"
-let gameState = "start";
+let gameState = "start"; // Current game state
 
-// NEW: position and size of the button (used on both start and game over screens)
+// Button position and size
 let buttonX = 105;
 let buttonY = 360;
 let buttonW = 150;
@@ -14,24 +16,24 @@ let buttonH = 50;
 
 function preload() {
   // Loads images before the game starts
-  backgroundImage = loadImage("assets/doodlejump-background-space.png"); // Loads the background
+  backgroundImage = loadImage("assets/doodlejump-background-space.png"); // Loads background
+  characterImage = loadImage("assets/doodlejump-character-03.png"); // Loads character
 }
 
 function setup() {
   // Runs once when the game starts
   createCanvas(360, 776); // Creates the game canvas
-  createPlatforms(); // NEW: your platform loop now lives in its own function
+  createPlatforms(); // Creates the platforms
 }
 
-// NEW: creates the platforms. In its own function so we can
-// run it again when the player clicks "Play again".
 function createPlatforms() {
-  platforms = []; // Empties the array so the old platforms disappear
+  // Creates new platforms
+  platforms = []; // Clears old platforms
 
   for (let i = 0; i < 7; i++) {
     // Creates 7 platforms
     let x = random(20, 240); // Random horizontal position
-    let y = 700 - i * 100; // Places platforms above each other
+    let y = 700 - i * 100; // Vertical position
 
     platforms.push(new Platform(x, y, 70, 13)); // Adds a platform
   }
@@ -39,70 +41,95 @@ function createPlatforms() {
 
 function draw() {
   // Runs continuously
-  image(backgroundImage, 0, 0, width, height); // Draws the background
+  image(backgroundImage, 0, 0, width, height); // Draws background
 
-  // NEW: draw the right screen depending on the mode
   if (gameState === "start") {
+    // Start screen
     drawStartScreen();
   } else if (gameState === "playing") {
+    // Game is running
+
+    let previousBottom = player.yPos + player.height; // Saves previous foot position
+
+    player.move(); // Moves the character once per frame
+
     for (let i = 0; i < platforms.length; i++) {
-      // Goes through all platforms
-      platforms[i].draw(); // Draws each platform
+      // Checks all platforms
+
+      let platform = platforms[i]; // Gets current platform
+
+      platform.draw(); // Draws the platform
+
+      if (
+        player.speedY > 0 && // Player is falling
+        previousBottom <= platform.yPos && // Feet were above platform
+        player.yPos + player.height >= platform.yPos && // Feet reach platform
+        player.xPos + player.width > platform.xPos && // Checks left overlap
+        player.xPos < platform.xPos + platform.width // Checks right overlap
+      ) {
+        player.yPos = platform.yPos - player.height; // Places player on platform
+        player.speedY = -12; // Makes player jump again
+      }
     }
 
-    // Later, when the character is added here:
-    // if (player.yPos > height) {
-    //   gameState = "gameOver";
-    // }
+    player.draw(); // Draws the character
+
+    if (player.yPos > height) {
+      // Checks if player falls below screen
+      gameState = "gameOver"; // Ends the game
+    }
   } else if (gameState === "gameOver") {
-    drawGameOverScreen();
+    // Game has ended
+    drawGameOverScreen(); // Shows game over screen
   }
 }
 
-// NEW: start screen with title and button
 function drawStartScreen() {
-  fill(255);
-  textAlign(CENTER, CENTER);
-  textSize(32);
-  text("Doodle Jump", width / 2, 250);
-  drawButton("Start");
+  // Draws the start screen
+  fill(255); // White text
+  textAlign(CENTER, CENTER); // Centers text
+  textSize(32); // Text size
+  text("Doodle Jump", width / 2, 250); // Game title
+  drawButton("Start"); // Start button
 }
 
-// NEW: end screen with text and button
 function drawGameOverScreen() {
-  fill(255);
-  textAlign(CENTER, CENTER);
-  textSize(32);
-  text("Game Over", width / 2, 250);
-  drawButton("Play again");
+  // Draws game over screen
+  fill(255); // White text
+  textAlign(CENTER, CENTER); // Centers text
+  textSize(32); // Text size
+  text("Game Over", width / 2, 250); // Game over message
+  drawButton("Play again"); // Restart button
 }
 
-// NEW: draws the button with the text we send in
 function drawButton(label) {
-  fill(255, 200, 0);
-  rect(buttonX, buttonY, buttonW, buttonH, 10);
-  fill(0);
-  textSize(20);
-  text(label, buttonX + buttonW / 2, buttonY + buttonH / 2);
+  // Draws a button
+  fill(255, 200, 0); // Yellow button
+  rect(buttonX, buttonY, buttonW, buttonH, 10); // Button shape
+  fill(0); // Black text
+  textSize(20); // Text size
+  text(label, buttonX + buttonW / 2, buttonY + buttonH / 2); // Button text
 }
 
-// NEW: runs automatically every time you click
 function mousePressed() {
-  // Is the mouse inside the button?
+  // Runs when mouse is clicked
+
   let onButton =
     mouseX > buttonX &&
     mouseX < buttonX + buttonW &&
     mouseY > buttonY &&
-    mouseY < buttonY + buttonH;
+    mouseY < buttonY + buttonH; // Checks if button is clicked
 
   if (onButton && (gameState === "start" || gameState === "gameOver")) {
-    createPlatforms(); // New platforms for a new round
-    gameState = "playing";
+    createPlatforms(); // Creates new platforms
+
+    player = new Character(130, 600, 40, 48, characterImage); // Creates character
+
+    gameState = "playing"; // Starts the game
   }
 }
 
-// NEW: needed because the file uses "import".
-// It makes p5 find your functions.
+// Connects p5.js functions to the game
 window.preload = preload;
 window.setup = setup;
 window.draw = draw;
